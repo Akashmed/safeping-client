@@ -6,12 +6,15 @@ import React from "react";
 import Login from "../pages/login/Login.jsx";
 import Signup from "../pages/signup/Signup.jsx";
 import Home from "../pages/home/Home.jsx";
+import ErrorPage from "../components/ErrorPage.jsx";
+import UserDashboard from "../pages/userDashboard/UserDashboard.jsx";
 
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
+    errorElement: <ErrorPage/>,
     children: [
       {
         path: '/',
@@ -26,5 +29,9 @@ export const router = createBrowserRouter([
   {
     path:'login',
     element: <Login/>
+  },
+  {
+    path: 'user-dashboard',
+    element:<UserDashboard/>
   }
 ]);
