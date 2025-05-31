@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Edit, Save, X, Camera, Mail, Phone, User } from "lucide-react"
+import { Edit, Save, X, Camera, Mail, Phone, User, House } from "lucide-react"
 import React from "react"
 import useAuth from "../../hooks/useAuth"
 import { imageUpload } from "../../api/utensils"
@@ -7,6 +7,7 @@ import { getUser, updateUser } from "../../api/auth"
 import toast from "react-hot-toast"
 import Hashloader from "../../components/loader/Hashloader"
 import { Helmet } from "react-helmet-async"
+import { Link } from "react-router-dom"
 
 export default function UserDashboard() {
     const [isEditing, setIsEditing] = useState(false)
@@ -25,32 +26,37 @@ export default function UserDashboard() {
     })
 
     useEffect(() => {
+        if (user) fetchUserData();
+    }, [user]);
+
+    useEffect(() => {
         if (user) {
-            fetchUserData();
+            if (userData) {
+                setEditedInfo({
+                    name: user.displayName || "",
+                    email: user.email || "",
+                    phone: userData.phone || user.phoneNumber || "",
+                    status: userData.status || "fetching",
+                    AccountType: userData.accountType || "",
+                    image: user.photoURL || "/placeholder.svg?height=120&width=120",
+                })
+            } else {
+                setEditedInfo({
+                    name: user.displayName || "",
+                    email: user.email || "",
+                    phone: user.phoneNumber || "",
+                    status: "unverified",
+                    AccountType: "Basic",
+                    image: user.photoURL || "/placeholder.svg?height=120&width=120",
+                })
+            }
         }
-    }, [user])
+    }, [user, userData, isEditing]);
+
 
     const fetchUserData = async () => {
         const userDB = await getUser(user?.email);
-        if (userDB) {
-            setEditedInfo({
-                name: user.displayName || "",
-                email: user.email || "",
-                phone: userDB.phone || user.phoneNumber || "",
-                status: userDB.status || "fetching",
-                AccountType: userDB.accountType || "",
-                image: user.photoURL || "/placeholder.svg?height=120&width=120",
-            })
-        } else {
-            setEditedInfo({
-                name: user.displayName || "",
-                email: user.email || "",
-                phone: user.phoneNumber || "",
-                status: "unverified",
-                AccountType: "Basic",
-                image: user.photoURL || "/placeholder.svg?height=120&width=120",
-            })
-        }
+        setUserData(userDB);
     }
 
 
@@ -162,7 +168,7 @@ export default function UserDashboard() {
     }
 
     const lastLogin = lastLoginAt(user?.metadata?.lastLoginAt)
-    if (loading) return <Hashloader />
+    if (loading && !userData) return <Hashloader />
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -172,8 +178,10 @@ export default function UserDashboard() {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">User Dashboard</h1>
-                    <p className="text-gray-600 mt-2">Manage your profile information</p>
+                    <h1 className="text-3xl font-bold flex gap-2 justify-between items-center text-gray-900">User Dashboard
+                        <Link to={'/'}><House size={28} strokeWidth={2.5} /></Link>
+                    </h1>
+                    <p className="text-gray-600 mt-1">Manage your profile information</p>
                 </div>
 
                 {/* Profile Card */}
@@ -316,7 +324,7 @@ export default function UserDashboard() {
                                         />
                                     ) : (
                                         <div className="p-3 bg-gray-50 rounded-md border">
-                                            <p className="font-medium">{editedInfo.phone || '+1 (555) 123-4567'}</p>
+                                            <p className={`${!editedInfo?.phone ? 'text-gray-400 font-light' : 'font-medium'}`}>{editedInfo.phone || 'Enter your phone number'}</p>
                                         </div>
                                     )}
                                 </div>
