@@ -11,6 +11,7 @@ export default function UserDashboard() {
     const [isEditing, setIsEditing] = useState(false)
     const { user, updateUserProfile, loading } = useAuth()
     const [selectedFile, setSelectedFile] = useState(null);
+    const [userData, setUserData] = useState(null);
     const fileInputRef = useRef(null);
 
     const [editedInfo, setEditedInfo] = useState({
@@ -35,7 +36,7 @@ export default function UserDashboard() {
                 name: user.displayName || "",
                 email: user.email || "",
                 phone: userDB.phone || user.phoneNumber || "",
-                status: userDB.status || "",
+                status: userDB.status || "fetching",
                 AccountType: userDB.accountType || "",
                 image: user.photoURL || "/placeholder.svg?height=120&width=120",
             })
@@ -57,7 +58,8 @@ export default function UserDashboard() {
     }
 
     const handleSave = async () => {
-        let imageUrl = editedInfo.image;
+        const toastId = toast.loading('Updating info...');
+        let imageUrl = user?.photoURL;
 
         // Only upload if a new file was selected
         if (selectedFile) {
@@ -69,6 +71,7 @@ export default function UserDashboard() {
                 return;
             }
         }
+
 
         if (editedInfo.phone === "") {
             // If phone is empty, set it to null
@@ -83,15 +86,16 @@ export default function UserDashboard() {
         // Here you would typically save all user data to your database
         try {
             // update user info in the database
-            await updateUserProfile(editedInfo.name, editedInfo.image);
-            console.log(editedInfo.image)
+            if (editedInfo.name !== user.displayName || imageUrl?.data?.display_url !== user.photoURL) {
+                await updateUserProfile(editedInfo.name, imageUrl?.data?.display_url || imageUrl);
+            }
             if (editedInfo.phone) {
                 await updateUser(user?.email, { phone: editedInfo.phone });
             }
-            toast.success("Profile updated successfully");
+            toast.success("Profile updated successfully", { id: toastId });
         } catch (error) {
             console.error("Failed to update user:", error);
-            toast.error(error.message);
+            toast.error(error.message, { id: toastId });
         }
     };
 
@@ -101,6 +105,8 @@ export default function UserDashboard() {
                 name: user.displayName || "",
                 email: user.email || "",
                 phone: user.phoneNumber || "",
+                status: user.status || "unverified",
+                AccountType: user.accountType || "Basic",
                 image: user.photoURL || "/placeholder.svg?height=120&width=120",
             })
         }
@@ -155,7 +161,7 @@ export default function UserDashboard() {
     }
 
     const lastLogin = lastLoginAt(user?.metadata?.lastLoginAt)
-    if(loading) return <Hashloader/>
+    if (loading) return <Hashloader />
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -177,7 +183,7 @@ export default function UserDashboard() {
                             {!isEditing ? (
                                 <button
                                     onClick={handleEdit}
-                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 py-2"
+                                    className="inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 py-2"
                                 >
                                     <Edit className="w-4 h-4 mr-2" />
                                     Edit Profile
@@ -186,14 +192,14 @@ export default function UserDashboard() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={handleSave}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-9 px-4 py-2"
+                                        className="inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-9 px-4 py-2"
                                     >
                                         <Save className="w-4 h-4 mr-2" />
                                         Save
                                     </button>
                                     <button
                                         onClick={handleCancel}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 py-2"
+                                        className="inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 py-2"
                                     >
                                         <X className="w-4 h-4 mr-2" />
                                         Cancel
@@ -322,7 +328,7 @@ export default function UserDashboard() {
                         <div className="space-y-3">
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Account Type</span>
-                                <span className={` ${editedInfo.AccountType === 'Premium' ? 'text-purple-800 bg-purple-100': 'text-blue-600 bg-blue-100' }  px-2 py-0.5 rounded-full text-xs font-semibold`}>{editedInfo.AccountType}</span>
+                                <span className={` ${editedInfo.AccountType === 'Premium' ? 'text-purple-800 bg-purple-100' : 'text-blue-600 bg-blue-100'}  px-2 py-0.5 rounded-full text-xs font-semibold`}>{editedInfo.AccountType}</span>
                             </div>
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Member Since</span>
