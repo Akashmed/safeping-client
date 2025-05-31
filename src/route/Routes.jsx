@@ -8,6 +8,7 @@ import Signup from "../pages/signup/Signup.jsx";
 import Home from "../pages/home/Home.jsx";
 import ErrorPage from "../components/ErrorPage.jsx";
 import UserDashboard from "../pages/userDashboard/UserDashboard.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
 
 
 export const router = createBrowserRouter([
@@ -32,6 +33,6 @@ export const router = createBrowserRouter([
   },
   {
     path: 'user-dashboard',
-    element:<UserDashboard/>
+    element:<PrivateRoute><UserDashboard/></PrivateRoute>
   }
 ]);
