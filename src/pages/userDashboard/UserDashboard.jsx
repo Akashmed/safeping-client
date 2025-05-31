@@ -6,6 +6,7 @@ import { imageUpload } from "../../api/utensils"
 import { getUser, updateUser } from "../../api/auth"
 import toast from "react-hot-toast"
 import Hashloader from "../../components/loader/Hashloader"
+import { Helmet } from "react-helmet-async"
 
 export default function UserDashboard() {
     const [isEditing, setIsEditing] = useState(false)
@@ -165,6 +166,9 @@ export default function UserDashboard() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+            <Helmet>
+                <title>User Dashboard</title>
+            </Helmet>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -174,7 +178,7 @@ export default function UserDashboard() {
 
                 {/* Profile Card */}
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
-                    <div className="p-6 pb-4">
+                    <div className="md:p-6 p-3 pb-4">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-semibold text-gray-900">Profile Information</h2>
@@ -183,9 +187,9 @@ export default function UserDashboard() {
                             {!isEditing ? (
                                 <button
                                     onClick={handleEdit}
-                                    className="inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 py-2"
+                                    className="inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 border border-gray-200 bg-white shadow-sm hover:bg-gray-100 h-9 px-4 md:py-2 py-6"
                                 >
-                                    <Edit className="w-4 h-4 mr-2" />
+                                    <Edit className="w-6 md:w-4 h-6 md:h-4 mr-2" />
                                     Edit Profile
                                 </button>
                             ) : (
