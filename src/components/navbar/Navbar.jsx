@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import logo from "../../assets/logo.png";
 
@@ -8,7 +8,13 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { user, logOut } = useAuth();
     const navigate = useNavigate();
-    const items = ["Police Station", "Fire service", "Hospitals", "Experts"];
+    const items = [
+        { label: 'Police', value: 'police' },
+        { label: 'Hospital', value: 'hospital' },
+        { label: 'Fire Station', value: 'fire_station' },
+        { label: 'Experts', value: 'exp' },
+    ];
+    const [_, setSearchParams] = useSearchParams();
 
     const handleLogout = async () => {
         const toastId = toast.loading('Logging out...');
@@ -25,12 +31,12 @@ const Navbar = () => {
 
     return (
         <nav className="relative bg-white shadow dark:bg-gray-800">
-            <div className="container px-6 py-1 mx-auto">
+            <div className="container px-6 md:py-1 py-5 mx-auto">
                 <div className="lg:flex lg:items-center lg:justify-between">
                     <div className="flex items-center justify-between">
                         <Link to={'/'}>
                             <img
-                                className="w-auto h-6 sm:h-15"
+                                className="w-auto h-18 md:h-15"
                                 src={logo}
                                 alt="safeping logo"
                             />
@@ -85,7 +91,7 @@ const Navbar = () => {
                             }`}
                     >
                         <div className="flex flex-col items-start -mx-6 lg:flex-row lg:items-center lg:mx-8">
-                            {items.map((text, i) => {
+                            {items.map((item, i) => {
                                 const isLast = i === items.length - 1;
 
                                 if (isLast) {
@@ -112,9 +118,13 @@ const Navbar = () => {
                                     <a
                                         key={i}
                                         href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setSearchParams({ type: item.value });
+                                        }}
                                         className="px-3 py-2 mx-3 mt-2 text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
-                                        {text}
+                                        {item.label}
                                     </a>
                                 );
                             })}
