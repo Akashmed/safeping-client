@@ -9,9 +9,9 @@ const Navbar = () => {
     const { user, logOut } = useAuth();
     const navigate = useNavigate();
     const items = [
-        { label: 'Police', value: 'police' },
+        { label: 'Police Station', value: 'police' },
         { label: 'Hospital', value: 'hospital' },
-        { label: 'Fire Station', value: 'fire_station' },
+        { label: 'Fire Service', value: 'fire_station' },
         { label: 'Experts', value: 'exp' },
     ];
     const [_, setSearchParams] = useSearchParams();

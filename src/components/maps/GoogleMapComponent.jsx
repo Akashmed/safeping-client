@@ -5,12 +5,12 @@ import { useSearchParams } from 'react-router-dom';
 
 const libraries = ['places'];
 
+// ...rest of your imports
 const GoogleMapComponent = () => {
   const [searchParams] = useSearchParams();
   const placeType = searchParams.get('type');
   const validTypes = ['police', 'hospital', 'fire_station'];
-  const safePlaceType = validTypes.includes(placeType) ? placeType : 'police';
-  console.log('Place Type:', placeType);
+  const safePlaceType = validTypes.includes(placeType) ? placeType : null;
 
   const [currentPosition, setCurrentPosition] = useState(null);
   const [places, setPlaces] = useState([]);
@@ -34,14 +34,18 @@ const GoogleMapComponent = () => {
     );
   }, []);
 
-  // Fetch user location on load
   useEffect(() => {
     fetchLocation();
   }, [fetchLocation]);
 
-  // Fetch nearby places when location or placeType changes
   useEffect(() => {
     if (!currentPosition || !window.google) return;
+
+    // ✅ Only search if placeType is valid
+    if (!safePlaceType) {
+      setPlaces([]); // clear old results
+      return;
+    }
 
     const map = new window.google.maps.Map(document.createElement('div'));
     const service = new window.google.maps.places.PlacesService(map);
@@ -68,7 +72,6 @@ const GoogleMapComponent = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Refresh Button */}
       <button
         onClick={fetchLocation}
         style={{
@@ -98,18 +101,15 @@ const GoogleMapComponent = () => {
         center={currentPosition}
         zoom={15}
       >
-        {/* Current Location Marker */}
         <Marker
           position={currentPosition}
           title="You are here"
           icon={{
-            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Blue dot icon
-            scaledSize: new window.google.maps.Size(40, 40), // Optional: resize
+            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            scaledSize: new window.google.maps.Size(40, 40),
           }}
         />
 
-
-        {/* Nearby Places Markers */}
         {places.map((place) => (
           <Marker
             key={place.place_id}
