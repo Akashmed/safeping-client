@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import GoogleMapComponent from '../../components/maps/GoogleMapComponent';
 import NearbyPlacesPage from '../NearbyPlacesPage';
+import HomeTools from './HomeTools';
 
 const Home = () => {
     return (
@@ -9,6 +10,7 @@ const Home = () => {
             <Helmet>
                 <title>Safeping | Home</title>
             </Helmet>
+            <HomeTools />
             <NearbyPlacesPage />
         </div>
     );

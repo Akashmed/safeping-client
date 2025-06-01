@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useGoogleMaps } from '../context/GoogleMapsProvider';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { fetchNearbyPlaces, getDistanceFromLatLonInKm, getPlaceDetails } from '../utils/mapUtils';
+import toast from 'react-hot-toast';
+import Hashloader from '../components/loader/Hashloader';
 
 const validTypes = ['police', 'hospital', 'fire_station'];
 
@@ -15,6 +17,7 @@ const NearbyPlacesPage = () => {
     const [currentPosition, setCurrentPosition] = useState(null);
     const [places, setPlaces] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const fetchLocation = useCallback(() => {
@@ -38,11 +41,14 @@ const NearbyPlacesPage = () => {
     }, [fetchLocation]);
 
     useEffect(() => {
-        if (!isLoaded || !currentPosition || !safePlaceType) return;
+        const fetchPlaces = async () => {
+            if (!isLoaded || !currentPosition || !safePlaceType) return;
 
-        fetchNearbyPlaces(currentPosition, safePlaceType)
-            .then(async (results) => {
-                // Compute distance for each place
+            setLoading(true);
+            setError(null); // reset previous error
+            try {
+                const results = await fetchNearbyPlaces(currentPosition, safePlaceType);
+
                 const placesWithDistance = results.map((place) => {
                     const lat2 = place.geometry.location.lat();
                     const lng2 = place.geometry.location.lng();
@@ -55,12 +61,10 @@ const NearbyPlacesPage = () => {
                     return { ...place, distance };
                 });
 
-                // Sort by distance and take only top 10
                 const sortedTop10 = placesWithDistance
                     .sort((a, b) => a.distance - b.distance)
                     .slice(0, 10);
 
-                // Fetch phone numbers for top 10 only
                 const detailedPlaces = await Promise.all(
                     sortedTop10.map(async (place) => {
                         try {
@@ -76,18 +80,42 @@ const NearbyPlacesPage = () => {
                 );
 
                 setPlaces(detailedPlaces);
-            })
-            .catch((err) => {
+            } catch (err) {
                 console.error(err);
                 setError('Failed to fetch nearby places.');
-            });
+            } finally {
+                setLoading(false); // ✅ Always turn off loading at the end
+            }
+        };
+
+        fetchPlaces();
     }, [isLoaded, currentPosition, safePlaceType]);
 
 
-    console.log(places);
-    if (error) return <div className="p-4 text-red-600">{error}</div>;
-    if (!isLoaded) return <div>Loading Google Maps...</div>;
-    if (!currentPosition) return <div>Getting your location...</div>;
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (!isLoaded && !error) {
+            toast.loading('Loading Google Maps...', { id: 'map-loading' });
+        } else {
+            toast.dismiss('map-loading');
+        }
+    }, [isLoaded, error]);
+
+    useEffect(() => {
+        if (!currentPosition && isLoaded && !error) {
+            toast.loading('Fetching your location...', { id: 'location-loading' });
+        } else {
+            toast.dismiss('location-loading');
+        }
+    }, [currentPosition, isLoaded, error]);
+
+    if (loading) return <Hashloader />
 
     return (
         <div className="p-4">

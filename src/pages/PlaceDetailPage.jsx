@@ -1,7 +1,7 @@
 // src/pages/PlaceDetailPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useGoogleMaps } from '../context/GoogleMapsProvider';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { RefreshCw } from 'lucide-react';
 
@@ -12,10 +12,10 @@ const PlaceDetailPage = () => {
     const location = useLocation();
     const userLocation = location.state?.userLocation;
     const { isLoaded } = useGoogleMaps();
-
     const [place, setPlace] = useState(null);
     const [error, setError] = useState(null);
     const [currentUserLocation, setCurrentUserLocation] = useState(userLocation);
+    const navigate = useNavigate();
 
     // 👇 Refresh function
     const fetchLocation = () => {
@@ -74,27 +74,12 @@ const PlaceDetailPage = () => {
             <h1 className="text-2xl font-bold mb-4">{place.name}</h1>
             <button
                 onClick={fetchLocation}
-                style={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    left: '20px',
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    backgroundColor: '#4285F4',
-                    color: '#fff',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    zIndex: 10,
-                }}
                 title="Refresh Location"
+                className="absolute bottom-[90px] lg:bottom-[20px] left-[22px] w-[48px] h-[48px] rounded-full border-none bg-[#4285F4] text-white shadow-md flex items-center justify-center cursor-pointer z-10"
             >
                 <RefreshCw size={24} />
             </button>
+
             <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={13}>
                 <Marker
                     position={userLocation}
@@ -105,6 +90,12 @@ const PlaceDetailPage = () => {
                     title="Your Location" />
                 <Marker position={placeLoc} title={place.name} />
             </GoogleMap>
+            <button onClick={() => navigate(-1)} className="flex items-center mt-3 justify-center w-full px-5 py-2 text-sm text-gray-700 transition-colors duration-200 lg:hidden bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+                </svg>
+                <span>Go back</span>
+            </button>
         </div>
     );
 };
