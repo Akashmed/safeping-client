@@ -9,17 +9,18 @@ import Home from "../pages/home/Home.jsx";
 import ErrorPage from "../components/ErrorPage.jsx";
 import UserDashboard from "../pages/userDashboard/UserDashboard.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
+import PlaceDetailPage from "../pages/PlaceDetailPage.jsx";
 
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
-    errorElement: <ErrorPage/>,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
-        element: <Home/>
+        element: <Home />
       }
     ]
   },
@@ -28,11 +29,15 @@ export const router = createBrowserRouter([
     element: <Signup />
   },
   {
-    path:'login',
-    element: <Login/>
+    path: 'login',
+    element: <Login />
   },
   {
     path: 'user-dashboard',
-    element:<PrivateRoute><UserDashboard/></PrivateRoute>
+    element: <PrivateRoute><UserDashboard /></PrivateRoute>
+  },
+  {
+    path: "place/:placeId",
+    element: <PlaceDetailPage />
   }
 ]);

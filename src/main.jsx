@@ -7,13 +7,16 @@ import React from 'react'
 import { Toaster } from 'react-hot-toast'
 import { HelmetProvider } from 'react-helmet-async'
 import AuthProvider from './provider/AuthProvider.jsx'
+import { GoogleMapsProvider } from './context/GoogleMapsProvider.jsx'
 
 
 createRoot(document.getElementById('root')).render(
   <HelmetProvider>
-    <AuthProvider>
-      <Toaster />
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <GoogleMapsProvider>
+      <AuthProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </GoogleMapsProvider>
   </HelmetProvider>
 )
