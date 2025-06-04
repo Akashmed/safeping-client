@@ -78,7 +78,6 @@ const NearbyPlacesPage = () => {
                         }
                     })
                 );
-
                 setPlaces(detailedPlaces);
             } catch (err) {
                 console.error(err);
@@ -90,8 +89,6 @@ const NearbyPlacesPage = () => {
 
         fetchPlaces();
     }, [isLoaded, currentPosition, safePlaceType]);
-
-
 
     useEffect(() => {
         if (error) {
@@ -141,7 +138,7 @@ const NearbyPlacesPage = () => {
                         )}
 
                         <button
-                            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            className="mt-3 cursor-pointer px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                             onClick={() =>
                                 navigate(`/place/${place.place_id}`, {
                                     state: { userLocation: currentPosition },
@@ -150,7 +147,7 @@ const NearbyPlacesPage = () => {
                         >
                             View on Map
                         </button>
-                        <button className='mt-3 ml-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-800'>
+                        <button className='mt-3 cursor-pointer ml-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-800'>
                             Help
                         </button>
                     </div>
