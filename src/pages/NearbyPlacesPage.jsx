@@ -1,7 +1,7 @@
 // src/pages/NearbyPlacesPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useGoogleMaps } from '../context/GoogleMapsProvider';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { fetchNearbyPlaces, getDistanceFromLatLonInKm, getPlaceDetails } from '../utils/mapUtils';
 import toast from 'react-hot-toast';
 import Hashloader from '../components/loader/Hashloader';
@@ -147,9 +147,9 @@ const NearbyPlacesPage = () => {
                         >
                             View on Map
                         </button>
-                        <button className='mt-3 cursor-pointer ml-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-800'>
+                        <Link to={`/help/${place.place_id}`} className='mt-3 cursor-pointer ml-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-800'>
                             Help
-                        </button>
+                        </Link>
                     </div>
 
                 ))}

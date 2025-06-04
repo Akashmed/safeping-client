@@ -10,6 +10,7 @@ import ErrorPage from "../components/ErrorPage.jsx";
 import UserDashboard from "../pages/userDashboard/UserDashboard.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import PlaceDetailPage from "../pages/PlaceDetailPage.jsx";
+import HelpPage from "../pages/help/HelpPage.jsx";
 
 
 export const router = createBrowserRouter([
@@ -39,5 +40,9 @@ export const router = createBrowserRouter([
   {
     path: "place/:placeId",
     element: <PlaceDetailPage />
+  },
+  {
+    path: 'help/:placeId',
+    element: <HelpPage />
   }
 ]);
