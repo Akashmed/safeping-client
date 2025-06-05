@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import socket from '../help/socket';
 
 const RequestsPage = () => {
     const { placeId } = useParams();
     const [requests, setRequests] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!placeId) return;
 
         socket.off('connect');
         socket.off('helpRequest');
@@ -17,8 +19,13 @@ const RequestsPage = () => {
             console.log("Institution Connected to socket server with ID:", socket.id);
         });
 
-        if (placeId) {
+        if (socket.connected && placeId) {
             socket.emit('institutionConnected', { institutionId: placeId });
+        }else{
+            console.log("Socket not connected yet, will emit on connect");
+            socket.on("connect", () => {
+                socket.emit('institutionConnected', { institutionId: placeId });
+            });
         }
 
         socket.on('helpRequest', (data) => {
@@ -37,6 +44,7 @@ const RequestsPage = () => {
     const handleHelp = (userId) => {
         // navigate to tracking page
         socket.emit('helpAccepted', { userId, institutionId: placeId });
+        navigate(`/track/${userId}-${placeId}/officer`);
         setRequests([]);
     }
 

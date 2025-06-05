@@ -11,6 +11,8 @@ import UserDashboard from "../pages/userDashboard/UserDashboard.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import PlaceDetailPage from "../pages/PlaceDetailPage.jsx";
 import HelpPage from "../pages/help/HelpPage.jsx";
+import RequestsPage from "../pages/institution/RequestsPage.jsx";
+import LiveTrackingPage from "../pages/tracking/LiveTrackingPage.jsx";
 
 
 export const router = createBrowserRouter([
@@ -44,5 +46,13 @@ export const router = createBrowserRouter([
   {
     path: 'help/:placeId',
     element: <HelpPage />
+  },
+  {
+    path: 'requests/:placeId',
+    element: <PrivateRoute><RequestsPage /></PrivateRoute>
+  },
+  {
+    path: '/track/:sessionId/:senderType', // senderType: 'user' or 'officer'
+    element: <PrivateRoute><LiveTrackingPage /></PrivateRoute>
   }
 ]);
