@@ -164,6 +164,7 @@ export default function UserDashboard() {
 
         if (diffHours < 1) return "less than an hour ago"
         if (diffHours === 1) return "1 hour ago"
+        if (diffHours > 24) return diffHours < 48 ? "1 day ago" : `${Math.floor(diffHours / 24)} days ago`
         return `${diffHours} hours ago`
     }
 
